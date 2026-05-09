@@ -1,0 +1,61 @@
+:root {
+  --green: #39ff14;
+  --green-dim: #1a7a06;
+  --cyan: #00e5ff;
+  --dark: #060b10;
+  --dark2: #0d1b2a;
+  --dark3: #112233;
+  --card-bg: rgba(13, 27, 42, 0.85);
+  --border: rgba(57, 255, 20, 0.25);
+  --text: #c8f0d0;
+  --text-dim: #5a8a6a;
+  --danger: #ff4444;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  min-height: 100vh;
+  background-color: var(--dark);
+}
+
+body {
+  font-family: 'Exo 2', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(57, 255, 20, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 229, 255, 0.04) 0%, transparent 60%),
+    var(--dark);
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dark2); }
+::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 3px; }
+
+@keyframes portalSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(57, 255, 20, 0.3); }
+  50% { box-shadow: 0 0 24px rgba(57, 255, 20, 0.7); }
+}
+
+@keyframes scanline {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+.animate-up {
+  animation: fadeUp 0.5s ease forwards;
+}
