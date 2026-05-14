@@ -91,14 +91,12 @@ export default function CharacterList() {
                 ;(e.currentTarget as HTMLDivElement).style.boxShadow = 'none'
               }}
             >
-              {/* Image */}
               <div style={{ position: 'relative', aspectRatio: '1', overflow: 'hidden', background: '#0a1520' }}>
                 {c.imageData ? (
                   <img src={c.imageData} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', color: 'rgba(57,255,20,0.2)', fontSize: '3rem' }}>⬡</div>
                 )}
-                {/* Status badge */}
                 <div style={{
                   position: 'absolute', top: 10, right: 10,
                   background: 'rgba(6,11,16,0.85)',
@@ -112,7 +110,6 @@ export default function CharacterList() {
                 </div>
               </div>
 
-              {/* Info */}
               <div style={{ padding: '1rem' }}>
                 <h3 style={{
                   fontFamily: 'Orbitron, sans-serif',

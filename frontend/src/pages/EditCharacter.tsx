@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { getById, update } from '../api/characterApi'
 import type { Character } from '../api/characterApi'
 import { getSkins } from '../api/skins'
@@ -20,27 +20,43 @@ export default function EditCharacter() {
     name: '', species: '', status: '', origin: '', imageName: '', imageData: ''
   })
   const [skins, setSkins] = useState<Skin[]>([])
-  const [loadingSkins, setLoadingSkins] = useState(true)
   const [selectedSkin, setSelectedSkin] = useState<string | null>(null)
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null)
+  const [loadingSkins, setLoadingSkins] = useState(true)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
+    if (id) getById(Number(id)).then(res => setForm(res.data))
     getSkins()
       .then(res => setSkins(res.data))
       .finally(() => setLoadingSkins(false))
-  }, [])
-
-  useEffect(() => {
-    if (!id) return
-    getById(Number(id)).then(res => {
-      setForm(res.data)
-      setSelectedSkin(res.data.imageName || null)
-    })
   }, [id])
 
   const handleSkinSelect = (skin: Skin) => {
     setSelectedSkin(skin.skinId)
+    setUploadPreview(null)
     setForm(f => ({ ...f, imageName: skin.skinId, imageData: skin.imageData }))
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      const base64 = reader.result as string
+      setUploadPreview(base64)
+      setSelectedSkin(null)
+      setForm(f => ({ ...f, imageName: file.name, imageData: base64 }))
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleRemoveUpload = () => {
+    setUploadPreview(null)
+    setForm(f => ({ ...f, imageName: '', imageData: '' }))
+    if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
   const handleSubmit = async () => {
@@ -62,8 +78,26 @@ export default function EditCharacter() {
         EDITAR PERSONAGEM
       </h1>
       <p style={{ color: 'rgba(200,240,208,0.4)', marginBottom: '2rem', fontSize: '0.85rem' }}>
-        Modifique os dados deste ser interdimensional ou troque a skin no multiverso
+        Modifique os dados deste ser interdimensional
       </p>
+
+      {form.imageData && !selectedSkin && !uploadPreview && (
+        <div style={{
+          background: 'rgba(13,27,42,0.6)',
+          border: '1px solid rgba(0,229,255,0.15)',
+          borderRadius: 12, padding: '1.5rem', marginBottom: '1.5rem',
+        }}>
+          <p style={{ fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '0.15em', color: 'rgba(0,229,255,0.7)', marginBottom: '1rem' }}>
+            IMAGEM ATUAL
+          </p>
+          <div style={{ width: 110, borderRadius: 10, overflow: 'hidden', border: '2px solid rgba(0,229,255,0.4)' }}>
+            <img src={form.imageData} alt="atual" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
+            <div style={{ padding: '0.4rem', textAlign: 'center', background: 'rgba(0,229,255,0.1)', fontFamily: 'Orbitron', fontSize: '0.55rem', color: '#00e5ff' }}>
+              ATUAL
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{
         background: 'rgba(13,27,42,0.6)',
@@ -71,8 +105,9 @@ export default function EditCharacter() {
         borderRadius: 12, padding: '1.5rem', marginBottom: '1.5rem',
       }}>
         <p style={{ fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '0.15em', color: 'rgba(0,229,255,0.7)', marginBottom: '1rem' }}>
-          SELECIONE UMA SKIN
+          TROCAR SKIN
         </p>
+
         {loadingSkins ? (
           <p style={{ color: 'rgba(0,229,255,0.4)', fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '0.1em' }}>
             CARREGANDO SKINS...
@@ -89,13 +124,9 @@ export default function EditCharacter() {
                   ? '0 0 20px rgba(0,229,255,0.3)'
                   : 'none',
                 transition: 'all 0.2s',
-                width: 200,
+                width: 100,
               }}>
-                <img
-                  src={skin.imageData}
-                  alt={skin.label}
-                  style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }}
-                />
+                <img src={skin.imageData} alt={skin.label} style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
                 <div style={{
                   background: selectedSkin === skin.skinId ? 'rgba(0,229,255,0.15)' : 'rgba(13,27,42,0.9)',
                   padding: '0.4rem', textAlign: 'center',
@@ -108,6 +139,69 @@ export default function EditCharacter() {
             ))}
           </div>
         )}
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '1.5rem 0 1.25rem' }}>
+          <div style={{ flex: 1, height: 1, background: 'rgba(0,229,255,0.1)' }} />
+          <span style={{ fontFamily: 'Orbitron', fontSize: '0.65rem', color: 'rgba(0,229,255,0.4)', letterSpacing: '0.15em' }}>OU</span>
+          <div style={{ flex: 1, height: 1, background: 'rgba(0,229,255,0.1)' }} />
+        </div>
+
+        <p style={{ fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '0.15em', color: 'rgba(0,229,255,0.7)', marginBottom: '1rem' }}>
+          UPLOAD DE IMAGEM PRÓPRIA
+        </p>
+
+        {uploadPreview ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ width: 100, borderRadius: 10, overflow: 'hidden', border: '2px solid #00e5ff', boxShadow: '0 0 20px rgba(0,229,255,0.3)' }}>
+              <img src={uploadPreview} alt="preview" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }} />
+              <div style={{ background: 'rgba(0,229,255,0.15)', padding: '0.4rem', textAlign: 'center', fontFamily: 'Orbitron', fontSize: '0.55rem', color: '#00e5ff' }}>
+                NOVA
+              </div>
+            </div>
+            <button onClick={handleRemoveUpload} style={{
+              padding: '0.5rem 1rem',
+              background: 'rgba(255,68,68,0.08)',
+              border: '1px solid rgba(255,68,68,0.3)',
+              borderRadius: 6, color: '#ff4444',
+              fontFamily: 'Orbitron', fontSize: '0.65rem',
+              letterSpacing: '0.05em', cursor: 'pointer',
+            }}>
+              REMOVER
+            </button>
+          </div>
+        ) : (
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              border: '2px dashed rgba(0,229,255,0.2)',
+              borderRadius: 10, padding: '1.25rem',
+              textAlign: 'center', cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0,229,255,0.5)'
+              ;(e.currentTarget as HTMLDivElement).style.background = 'rgba(0,229,255,0.04)'
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0,229,255,0.2)'
+              ;(e.currentTarget as HTMLDivElement).style.background = 'transparent'
+            }}
+          >
+            <div style={{ fontSize: '1.25rem', marginBottom: '0.4rem' }}>📁</div>
+            <p style={{ fontFamily: 'Orbitron', fontSize: '0.65rem', color: 'rgba(0,229,255,0.6)', letterSpacing: '0.1em', marginBottom: '0.2rem' }}>
+              CLIQUE PARA FAZER UPLOAD
+            </p>
+            <p style={{ fontSize: '0.7rem', color: 'rgba(200,240,208,0.3)' }}>PNG, JPG ou JPEG</p>
+          </div>
+        )}
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/png, image/jpeg"
+          onChange={handleUpload}
+          style={{ display: 'none' }}
+        />
       </div>
 
       <div style={{
@@ -116,6 +210,10 @@ export default function EditCharacter() {
         borderRadius: 12, padding: '1.5rem',
         display: 'flex', flexDirection: 'column', gap: '1rem',
       }}>
+        <p style={{ fontFamily: 'Orbitron', fontSize: '0.7rem', letterSpacing: '0.15em', color: 'rgba(0,229,255,0.7)' }}>
+          ATRIBUTOS
+        </p>
+
         <div>
           <label style={{ fontSize: '0.75rem', color: 'rgba(200,240,208,0.5)', display: 'block', marginBottom: '0.4rem' }}>NOME</label>
           <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={inputStyle}
@@ -127,7 +225,7 @@ export default function EditCharacter() {
           <div>
             <label style={{ fontSize: '0.75rem', color: 'rgba(200,240,208,0.5)', display: 'block', marginBottom: '0.4rem' }}>ESPÉCIE</label>
             <select value={form.species} onChange={e => setForm({ ...form, species: e.target.value })} style={{ ...inputStyle, cursor: 'pointer' }}>
-              {['Human','Alien','Robot','Humanoid','Animal','Cronenberg','Unknown'].map(s => (
+              {['Human', 'Alien', 'Humanoid', 'Robot', 'Animal', 'Disease', 'Poopybutthole', 'Mythological Creature', 'Cronenberg', 'Planet', 'Parasite', 'Genetic Experiment', 'Unknown'].map(s => (
                 <option key={s} style={{ background: '#0d1b2a' }}>{s}</option>
               ))}
             </select>
@@ -135,7 +233,7 @@ export default function EditCharacter() {
           <div>
             <label style={{ fontSize: '0.75rem', color: 'rgba(200,240,208,0.5)', display: 'block', marginBottom: '0.4rem' }}>STATUS</label>
             <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} style={{ ...inputStyle, cursor: 'pointer' }}>
-              {['Alive','Dead','Unknown'].map(s => <option key={s} style={{ background: '#0d1b2a' }}>{s}</option>)}
+              {['Alive', 'Dead', 'Unknown'].map(s => <option key={s} style={{ background: '#0d1b2a' }}>{s}</option>)}
             </select>
           </div>
         </div>

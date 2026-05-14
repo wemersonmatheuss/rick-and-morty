@@ -5,7 +5,6 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Portal decoration top */}
       <div style={{
         position: 'fixed', top: -120, right: -120, width: 300, height: 300,
         borderRadius: '50%',
@@ -22,7 +21,6 @@ export default function App() {
         display: 'flex', alignItems: 'center', gap: '2rem',
         height: 64,
       }}>
-        {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginRight: 'auto' }}>
           <div style={{
             width: 36, height: 36, borderRadius: '50%',
