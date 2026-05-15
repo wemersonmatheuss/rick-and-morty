@@ -16,11 +16,11 @@ public class Skin {
     private Long id;
 
     @Column(nullable = false)
-    private String skinId; // ex: "rick", "morty"
+    private String skinId;
 
     @Column(nullable = false)
-    private String label; // ex: "Rick Clássico"
+    private String label;
 
     @Column(name = "image_data", columnDefinition = "TEXT", nullable = false)
-    private String imageData; // Base64
+    private String imageData;
 }

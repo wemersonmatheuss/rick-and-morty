@@ -9,5 +9,5 @@ public class CharacterRequestDTO {
     private String status;
     private String origin;
     private String imageName;
-    private String imageData; // Base64
+    private String imageData;
 }

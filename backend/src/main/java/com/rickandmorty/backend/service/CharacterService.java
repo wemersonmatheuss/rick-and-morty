@@ -19,7 +19,6 @@ public class CharacterService {
     private final List<CharacterValidationStrategy> validationStrategies;
 
     public CharacterResponseDTO create(CharacterRequestDTO dto) {
-        // Aplica todas as strategies de validação (Strategy Pattern)
         validationStrategies.forEach(s -> s.validate(dto));
 
         Character character = Character.builder()
@@ -73,7 +72,6 @@ public class CharacterService {
         repository.deleteById(id);
     }
 
-    // Builder Pattern aplicado na construção do DTO de resposta
     private CharacterResponseDTO toResponse(Character c) {
         return CharacterResponseDTO.builder()
                 .id(c.getId())

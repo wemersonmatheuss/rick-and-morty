@@ -19,17 +19,17 @@ public class Character {
     private String name;
 
     @Column(nullable = false)
-    private String species; // ex: "Human", "Alien", "Robot"
+    private String species;
 
     @Column(nullable = false)
-    private String status; // "Alive", "Dead", "Unknown"
+    private String status;
 
     @Column(nullable = false)
-    private String origin; // planeta/local de origem
+    private String origin;
 
     @Column(name = "image_name", nullable = false)
-    private String imageName; // nome do arquivo de imagem
+    private String imageName;
 
     @Column(name = "image_data", columnDefinition = "TEXT")
-    private String imageData; // imagem em Base64
+    private String imageData;
 }

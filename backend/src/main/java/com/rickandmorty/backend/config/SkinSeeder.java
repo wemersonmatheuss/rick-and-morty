@@ -23,7 +23,7 @@ public class SkinSeeder implements CommandLineRunner {
         seedSkin("pixel-kid",     "Pixel Kid",                "skins/pixel-kid.jpeg");
         seedSkin("omega-milk",    "Omega Milk",               "skins/omega-milk.jpeg");
         seedSkin("bibliotecario", "Bibliotecário do Vazio",   "skins/bibliotecario.jpeg");
-        System.out.println("✅ Skins carregadas no banco!");
+        System.out.println("Skins carregadas no banco!");
     }
 
     private void seedSkin(String skinId, String label, String resourcePath) throws Exception {
@@ -33,7 +33,6 @@ public class SkinSeeder implements CommandLineRunner {
         byte[] bytes = resource.getInputStream().readAllBytes();
         String base64 = Base64.getEncoder().encodeToString(bytes);
 
-        // detecta extensão para montar o data URL correto
         String ext = resourcePath.substring(resourcePath.lastIndexOf('.') + 1).toLowerCase();
         String mime = ext.equals("jpg") || ext.equals("jpeg") ? "image/jpeg" : "image/png";
         String imageData = "data:" + mime + ";base64," + base64;

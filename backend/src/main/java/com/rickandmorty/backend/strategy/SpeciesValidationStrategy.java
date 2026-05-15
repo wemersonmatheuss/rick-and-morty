@@ -8,7 +8,9 @@ import java.util.List;
 public class SpeciesValidationStrategy implements CharacterValidationStrategy {
 
     private static final List<String> VALID_SPECIES =
-            List.of("Human", "Alien", "Robot", "Humanoid", "Animal", "Cronenberg", "Unknown");
+            List.of("Human", "Alien", "Humanoid", "Robot", "Animal", "Disease",
+                    "Poopybutthole", "Mythological Creature", "Cronenberg",
+                    "Planet", "Parasite", "Genetic Experiment", "Unknown");
 
     @Override
     public void validate(CharacterRequestDTO dto) {

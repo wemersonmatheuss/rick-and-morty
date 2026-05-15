@@ -3,7 +3,7 @@ package com.rickandmorty.backend.dto;
 import lombok.*;
 
 @Data
-@Builder  // ← Builder Pattern aplicado aqui
+@Builder
 public class CharacterResponseDTO {
     private Long id;
     private String name;

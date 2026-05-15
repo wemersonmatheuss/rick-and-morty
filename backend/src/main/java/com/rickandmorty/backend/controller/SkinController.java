@@ -1,5 +1,6 @@
 package com.rickandmorty.backend.controller;
 
+import com.rickandmorty.backend.dto.SkinRequestDTO;
 import com.rickandmorty.backend.dto.SkinResponseDTO;
 import com.rickandmorty.backend.service.SkinService;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +20,10 @@ public class SkinController {
     @GetMapping
     public ResponseEntity<List<SkinResponseDTO>> findAll() {
         return ResponseEntity.ok(service.findAll());
+    }
+
+    @PostMapping
+    public ResponseEntity<SkinResponseDTO> create(@RequestBody SkinRequestDTO dto) {
+        return ResponseEntity.status(201).body(service.create(dto));
     }
 }
